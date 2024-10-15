@@ -2,25 +2,26 @@
 import React, { useState } from "react";
 import { createClient } from "@/app/utils/supabase/client";
 import toast from "react-hot-toast";
-import { Ellipsis, ChevronsLeftRightEllipsis } from "lucide-react";
+import { ChevronsLeftRightEllipsis } from "lucide-react";
+import { type User } from "@supabase/supabase-js";
 
 interface UpdateButton {
   article_id: string;
-  comment: string;
   onUpdate: boolean;
+  user: User | null | undefined;
 }
 
 export default function UpdateButton(props: UpdateButton) {
-  const { onUpdate, article_id, comment } = props;
+  const { onUpdate, article_id, user } = props;
   const supabase = createClient();
   const [isUpdate, setIsUpdate] = useState<string>("");
   const [isUpdateBox, setIsUpdateBox] = useState<boolean>(onUpdate);
 
-  const updateComment = async (comment: string) => {
+  const updateComment = async () => {
     try {
       const { data, error } = await supabase
         .from("comments")
-        .update({ comment: isUpdate })
+        .update({ comment: isUpdate, email: user?.email })
         .eq("article_id", article_id);
 
       if (error) {
@@ -48,7 +49,7 @@ export default function UpdateButton(props: UpdateButton) {
 
           <form
             action={async () => {
-              await updateComment(comment);
+              await updateComment();
             }}
           >
             <textarea

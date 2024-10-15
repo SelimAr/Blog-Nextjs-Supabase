@@ -75,7 +75,7 @@ export default function RenderComments({
         <UpdateButton
           onUpdate={isUpdateBox}
           article_id={article_id}
-          comment={comment}
+          user={user}
         />
       ) : null}
     </>
