@@ -6,19 +6,21 @@ export type CategoryType = {
 };
 
 export type CommentsType = {
-  id: number;
+  id?: number;
   comment: string;
   article_id: string;
   created_at: string;
 };
 
 export type LikesType = {
-  id: number;
+  id?: number;
   like: boolean;
+  article_id: string;
+  created_at: string;
 };
 
 export type SavedType = {
-  id: number;
+  id?: number;
   saved: boolean;
 };
 

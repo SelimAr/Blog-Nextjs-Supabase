@@ -15,7 +15,7 @@ export default function RenderComments({
   created_at,
 }: {
   user: User | null | undefined;
-  id: number;
+  id?: number;
   comment: string;
   article_id: string;
   created_at: string;

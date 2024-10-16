@@ -32,9 +32,27 @@ export default function UserRender({ user }: { user: User | null }) {
     }
   };
 
+  const getLikes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("likes")
+        .select("like, article_id, created_at")
+        .eq("user_id", user?.id);
+
+      if (data) {
+        setIsLikes(data);
+      } else if (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      throw Error;
+    }
+  };
+
   useEffect(() => {
     getComments();
-  }, [user, getComments]);
+    getLikes();
+  }, [user, getComments, getLikes]);
 
   return (
     <>
@@ -43,7 +61,9 @@ export default function UserRender({ user }: { user: User | null }) {
             <RenderComments key={com.id} {...com} user={user} />
           ))
         : pathname === "/blog/account/likes"
-        ? isLikes?.map((like) => <RenderLikes key={like.id} {...like} />)
+        ? isLikes?.map((like) => (
+            <RenderLikes key={like.id} {...like} user={user} />
+          ))
         : pathname === "/blog/account/saved"
         ? isSaved?.map((saved) => <RenderSaved key={saved.id} {...saved} />)
         : null}

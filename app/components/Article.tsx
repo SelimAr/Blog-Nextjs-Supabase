@@ -13,6 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import ActionsButton from "./ActionsButton";
+import LikeButton from "./LikeButton";
 import RenderComments from "./RenderComments";
 import toast from "react-hot-toast";
 import { setDate } from "../utils/functions";
@@ -32,7 +33,6 @@ export default function ViewArticles(props: NewsType) {
   const supabase = createClient();
   const [isCommentBox, setIsCommentBox] = useState<Boolean>(false);
   const [isComment, setIsComment] = useState<string>("");
-  const [isLike, setIsLike] = useState<boolean>(false);
   const [isPostComments, setIsPostComments] = useState<CommentsType[]>([]);
 
   const postComment = async () => {
@@ -41,6 +41,7 @@ export default function ViewArticles(props: NewsType) {
         comment: isComment,
         user_id: user?.id,
         article_id: article_id,
+        email: user?.email,
       });
 
       if (error) {
@@ -72,33 +73,6 @@ export default function ViewArticles(props: NewsType) {
     }
   };
 
-  const postLike = async (isLike: boolean) => {
-    try {
-      const { data, error } = await supabase
-        .from("likes")
-        .insert({
-          like: isLike,
-          user_id: user?.id,
-          article_id: article_id,
-          email: user?.email,
-        })
-        .eq("article_id", article_id);
-
-      if (error) {
-        console.log(error);
-        toast.error(error as any);
-        return;
-      }
-    } catch (error) {
-      console.log("err like data");
-    }
-  };
-
-  const likeState = () => {
-    setIsLike(!isLike);
-    postLike(isLike);
-  };
-
   useEffect(() => {
     getPostComments();
   }, [getPostComments]);
@@ -126,17 +100,13 @@ export default function ViewArticles(props: NewsType) {
         </button>
       </div>
 
-      <div className="flex space-x-4">
-        <button
-          onClick={() => likeState()}
+      <div className="flex space-x-4 items-baseline">
+        <LikeButton
           disabled={!user}
-          className="disabled:cursor-not-allowed"
-        >
-          <Heart
-            size={25}
-            className={`${isLike ? "text-red-500" : "text-white"}`}
-          />
-        </button>
+          icon={<Heart size={25} />}
+          user={user}
+          article_id={article_id}
+        />
         <button
           disabled={!user}
           onClick={() => setIsCommentBox(!isCommentBox)}
